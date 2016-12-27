@@ -1,3 +1,5 @@
+#include "Data Structures and Constants.h"
+
 
 void setBorder( int matrixWhereToSetBorder[][] )
 {
