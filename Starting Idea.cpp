@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Data Structures and Constants.h"
+#include "Functions.h"
 using namespace std;
 
 int main()
