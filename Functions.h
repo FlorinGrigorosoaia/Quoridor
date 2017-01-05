@@ -134,4 +134,54 @@ void movePawn( int matrixWhereToAssign[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ], play
 	assignUsedCell( matrixWhereToAssign, currentPlayer );
 }
 
+void getInput( int matrixWhereToAssign[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ], player &currentPlayer )
+{
+	char move;
+	cout << " Pentru a muta pionul apasati 'p' + ENTER : " << '\n';
+	cout << " Pentru a aseza un zid apasati 'w' + ENTER : " << '\n';
+	cin >> move;
 
+	if ( move == 'p' )
+	{
+		printMatrix( matrixWhereToAssign );
+		movePawn( matrixWhereToAssign, currentPlayer );
+	}
+	//else
+		
+}
+
+void setNeededData( int matrixWhereToAssign[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ] )
+{
+	firstPlayer.position.line = 1;
+	firstPlayer.position.column = 9;
+	secondPlayer.position.line = 17;
+	secondPlayer.position.column = 9;
+
+	assignUsedCell( matrixWhereToAssign, firstPlayer );
+	assignUsedCell( matrixWhereToAssign, secondPlayer );
+}
+
+void play1vs1()
+{
+	bool switchPlayers = true; // firstPlayer moves
+	setBorder( quoridorMatrix );
+	setInitialData( firstPlayer );
+	setInitialData( secondPlayer );
+	setNeededData( quoridorMatrix );
+
+	while ( ( firstPlayer.position.line != 17 ) && ( secondPlayer.position.line != 1 ) )
+	{
+		if ( switchPlayers == true )
+		{
+			getInput( quoridorMatrix, firstPlayer );
+			printMatrix( quoridorMatrix );
+			switchPlayers = false;
+		}
+		else
+		{
+			getInput( quoridorMatrix, secondPlayer );
+			printMatrix( quoridorMatrix );
+			switchPlayers = true;
+		}
+	}
+}
