@@ -143,6 +143,7 @@ void getInput( int matrixWhereToAssign[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ], play
 
 	if ( move == 'p' )
 	{
+		system( "CLS" );
 		printMatrix( matrixWhereToAssign );
 		movePawn( matrixWhereToAssign, currentPlayer );
 	}
@@ -173,13 +174,17 @@ void play1vs1()
 	{
 		if ( switchPlayers == true )
 		{
+			system( "color B" );
 			getInput( quoridorMatrix, firstPlayer );
+			system( "CLS" );
 			printMatrix( quoridorMatrix );
 			switchPlayers = false;
 		}
 		else
 		{
+			system( "color E" );
 			getInput( quoridorMatrix, secondPlayer );
+			system( "CLS" );
 			printMatrix( quoridorMatrix );
 			switchPlayers = true;
 		}
