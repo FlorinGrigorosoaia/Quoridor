@@ -10,14 +10,14 @@ void setBorder( int matrixWhereToSetBorder[][] )
 	}
 }
 
-void assignUsedCell( int matrixWhereToAssign[][], matrixPosition usedCell )
+void assignUsedCell( int matrixWhereToAssign[][], player currentPlayer )
 {
-	matrixWhereToAssign[ usedCell.line ][ usedCell.column ] = PAWN;
+	matrixWhereToAssign[ currentPlayer.position.line ][ currentPlayer.position.column ] = currentPlayer.pawn;
 }
 
-void assignFreeCell( int matrixWhereToAssign[][], matrixPosition freeCell )
+void assignFreeCell( int matrixWhereToAssign[][], player currentPlayer )
 {
-	matrixWhereToAssign[ freeCell.line ][ freeCell.column ] = FREE;
+	matrixWhereToAssign[ currentPlayer.position.line ][ currentPlayer.position.column ] = FREE;
 }
 
 void initializeMovementArray( matrixPosition movementArrayToInitialize[] )
