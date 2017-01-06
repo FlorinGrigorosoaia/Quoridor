@@ -134,6 +134,55 @@ void movePawn( int matrixWhereToAssign[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ], play
 	assignUsedCell( matrixWhereToAssign, currentPlayer );
 }
 
+bool lee( int matrixToCheck[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ], player &currentPlayer, int finishLine )
+{
+	matrixPosition leeQueue[ NO_LIN_COL * NO_LIN_COL + 5 ];
+	matrixPosition currentPosition;
+	leeQueue[ 0 ].line = currentPosition.line = currentPlayer.position.line;
+	leeQueue[ 0 ].column = currentPosition.column = currentPlayer.position.column;
+	int first = 0, last = 0;
+	matrixToCheck[ currentPlayer.position.line ][ currentPlayer.position.column ] = 1;
+
+	while ( currentPosition.line != finishLine && first <= last) {
+		currentPosition.line = leeQueue[ first ].line;
+		currentPosition.column = leeQueue[ first ].column;
+		first++;
+
+		for ( int i = 0; i < NO_DIRECTIONS; ++i ) {
+			matrixPosition nextPosition;
+			nextPosition.line = currentPosition.line + movementArray[ i ].line;
+			nextPosition.column = currentPosition.column + movementArray[ i ].column;
+
+			if ( matrixToCheck[ nextPosition.line ][ nextPosition.column ] != WALL ) {
+				nextPosition.line += movementArray[ i ].line;
+				nextPosition.column += movementArray[ i ].column;
+
+				if ( matrixToCheck[ nextPosition.line ][ nextPosition.column ] == 0 ) {
+					++last;
+					leeQueue[ last ].line = nextPosition.line;
+					leeQueue[ last ].column = nextPosition.column;
+					matrixToCheck[ nextPosition.line ][ nextPosition.column ] = 1;
+				}
+				else if ( matrixToCheck[ nextPosition.line ][ nextPosition.column ] > 1 ) {
+					nextPosition.line += 2 * movementArray[ i ].line;
+					nextPosition.column += 2 * movementArray[ i ].column;
+
+					if ( matrixToCheck[ nextPosition.line ][ nextPosition.column ] == 0 ) {
+						++last;
+						leeQueue[ last ].line = nextPosition.line;
+						leeQueue[ last ].column = nextPosition.column;
+						matrixToCheck[ nextPosition.line ][ nextPosition.column ] = 1;
+					}
+				}
+			}
+		}
+	}
+
+	if ( first > last )
+		return false;
+	return true;
+}
+
 void getInput( int matrixWhereToAssign[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ], player &currentPlayer )
 {
 	char move;
