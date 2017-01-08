@@ -8,6 +8,7 @@
 #define INCREASE 1
 #define STAND 0
 #define NO_DIRECTIONS 4 
+#define SQUARE_SIDE 25
 
 struct matrixPosition
 {
