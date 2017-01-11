@@ -4,19 +4,6 @@
 
 using namespace std;
 
-void getInput( int matrixWhereToAssign[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ], player &currentPlayer, bool whichPlayer );
-
-
-void printMatrix( int matrixToPrint[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ] )
-{
-	for ( int i = 1; i < NO_LIN_COL - 1; i++ )
-	{
-		for ( int j = 1; j < NO_LIN_COL - 1; j++ )
-			cout << matrixToPrint[ i ][ j ] << ' ';
-		cout << '\n';
-	}
-}
-
 void setBorder( int matrixWhereToSetBorder[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ] )
 {
 	for ( int i = 0; i < NO_LIN_COL; i++ )
@@ -26,14 +13,19 @@ void setBorder( int matrixWhereToSetBorder[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ] )
 	}
 }
 
-void assignUsedCell( int matrixWhereToAssign[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ], player currentPlayer )
+void assignUsedCell( int matrixWhereToAssign[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ], player currentPlayer, bool whichPlayer )
 {
-	matrixWhereToAssign[ currentPlayer.position.line ][ currentPlayer.position.column ] = currentPlayer.pawn;
+	matrixWhereToAssign[ currentPlayer.position.line ][ currentPlayer.position.column ] = PAWN;
+	if ( whichPlayer == true )
+		rectangles[ ( currentPlayer.position.line - 1 ) / 2 ][ ( currentPlayer.position.column - 1 ) / 2 ].setFillColor( sf::Color::Red );
+	else
+		rectangles[ ( currentPlayer.position.line - 1 ) / 2 ][ ( currentPlayer.position.column - 1 ) / 2 ].setFillColor( sf::Color::Green );
 }
 
 void assignFreeCell( int matrixWhereToAssign[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ], player currentPlayer )
 {
 	matrixWhereToAssign[ currentPlayer.position.line ][ currentPlayer.position.column ] = FREE;
+	rectangles[ ( currentPlayer.position.line - 1 ) / 2 ][ ( currentPlayer.position.column - 1 ) / 2 ].setFillColor( sf::Color::White );
 }
 
 void initializeMovementArray( matrixPosition movementArrayToInitialize[ NO_DIRECTIONS ] )
@@ -65,28 +57,24 @@ bool directionIsHorizontal( char directionToCheck )
 	return false;
 }
 
-void assignWall( int matrixWhereToAssign[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ], matrixPosition startingWallPosition, char direction )
+void assignWall( int matrixWhereToAssign[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ], matrixPosition startingWallPosition, char direction, bool leeCall )
 {
 	if ( directionIsVertical( direction ) )
 	{
 		matrixWhereToAssign[ startingWallPosition.line ][ startingWallPosition.column ] = WALL;
 		matrixWhereToAssign[ startingWallPosition.line + 1 ][ startingWallPosition.column ] = WALL;
 		matrixWhereToAssign[ startingWallPosition.line + 2 ][ startingWallPosition.column ] = WALL;
+		if ( leeCall == false )
+			verticalWalls[ ( startingWallPosition.line - 1 ) / 2 ][ ( startingWallPosition.column - 2 ) / 2 ].setFillColor( brown );
 	}
 	if ( directionIsHorizontal( direction ) )
 	{
 		matrixWhereToAssign[ startingWallPosition.line ][ startingWallPosition.column ] = WALL;
 		matrixWhereToAssign[ startingWallPosition.line ][ startingWallPosition.column + 1 ] = WALL;
 		matrixWhereToAssign[ startingWallPosition.line ][ startingWallPosition.column + 2 ] = WALL;
+		if ( leeCall == false )
+			horizontalWalls[ ( startingWallPosition.line - 2 ) / 2 ][ ( startingWallPosition.column - 1 ) / 2 ].setFillColor( brown );
 	}
-}
-
-void setInitialData( player &currentPlayer )
-{
-	cout << " Introduceti-va numele : " << '\n';
-	cin >> currentPlayer.nameOfPlayer;
-	cout << currentPlayer.nameOfPlayer << ", introduceti simbolul pionului (numar intre 5 si 9) : " << '\n';
-	cin >> currentPlayer.pawn;
 }
 
 void moveOnCertainDirection( int matrixWhereToAssign[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ], player &currentPlayer, int indexInMovementArray, bool whichPlayer )
@@ -118,44 +106,26 @@ void moveOnCertainDirection( int matrixWhereToAssign[ NO_LIN_COL + 1 ][ NO_LIN_C
 			else
 			{
 				cout << "Ati introdus o mutare gresita. " << '\n';
-				getInput( matrixWhereToAssign, currentPlayer, whichPlayer );
+				//getInput( matrixWhereToAssign, currentPlayer, whichPlayer );
 			}
 		}
 	}
 }
 
-void movePawn( int matrixWhereToAssign[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ], player &currentPlayer, bool whichPlayer )
+void movePawn( int matrixWhereToAssign[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ], player &currentPlayer, bool whichPlayer, int newLine, int newColumn )
 {
-	cout << "Mutari posibile : ";
-	for ( int i = 0; i <= 3; i++ )
-	{
-		int neighbourLine = currentPlayer.position.line + movementArray[ i ].line;
-		int neighbourColumn = currentPlayer.position.column + movementArray[ i ].column;
-
-		if ( matrixWhereToAssign[ neighbourLine ][ neighbourColumn ] == 0 ) // there is no wall
-			cout << possibleMoves[ i ] << ' ';
-	}
-	cout << '\n';
-
-	char direction;
-	cout << " Pentru a muta in sus apasati 'u' + ENTER : " << '\n';
-	cout << " Pentru a muta in dreapta apasati 'r' + ENTER : " << '\n';
-	cout << " Pentru a muta in jos apasati 'd' + ENTER : " << '\n';
-	cout << " Pentru a muta in stanga apasati 'l' + ENTER : " << '\n';
-	cin >> direction;
-
 	assignFreeCell( matrixWhereToAssign, currentPlayer );
 
-	if ( direction == 'u' )
+	if ( newLine < currentPlayer.position.line )
 		moveOnCertainDirection( matrixWhereToAssign, currentPlayer, 0, whichPlayer );
-	else if ( direction == 'r' )
+	else if ( newColumn > currentPlayer.position.column )
 		moveOnCertainDirection( matrixWhereToAssign, currentPlayer, 1, whichPlayer );
-	else if ( direction == 'd' )
+	else if ( newLine > currentPlayer.position.line )
 		moveOnCertainDirection( matrixWhereToAssign, currentPlayer, 2, whichPlayer );
-	else
+	else if ( newColumn < currentPlayer.position.column )
 		moveOnCertainDirection( matrixWhereToAssign, currentPlayer, 3, whichPlayer );
 
-	assignUsedCell( matrixWhereToAssign, currentPlayer );
+	assignUsedCell( matrixWhereToAssign, currentPlayer, whichPlayer );
 }
 
 void copyTwoMatrices( int matrixToBeCopied[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ], int matrixWhereToCopy[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ] )
@@ -214,14 +184,14 @@ bool lee( int matrixToCheck[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ], player &current
 	return true;
 }
 
-void getWallInput( int matrixWhereToAssign[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ], bool whichPlayer )
+/*void getWallInput( int matrixWhereToAssign[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ], bool whichPlayer/*, char wallOrientation )
 {
 	matrixPosition wall;
 	char wallOrientation;
 	int leeMatrix[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ];
 	copyTwoMatrices( matrixWhereToAssign, leeMatrix );
 
-	cout << "Introduceti linia de start a zidului : " << '\n';
+	/*cout << "Introduceti linia de start a zidului : " << '\n';
 	cin >> wall.line;
 	cout << "Introduceti coloana de start a zidului : " << '\n';
 	cin >> wall.column;
@@ -232,11 +202,11 @@ void getWallInput( int matrixWhereToAssign[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ], 
 	{
 		if ( wall.line % 2 == 0 )
 		{
-			assignWall( leeMatrix, wall, wallOrientation );
+			assignWall( leeMatrix, wall, wallOrientation);
 			if ( whichPlayer == true )
 			{
 				if ( lee( leeMatrix, secondPlayer, 1 ) )
-					assignWall( matrixWhereToAssign, wall, wallOrientation );
+					assignWall( matrixWhereToAssign, wall, wallOrientation,  );
 				else
 				{
 					cout << " Ati introdus o pozitie gresita pentru zid. " << '\n';
@@ -292,61 +262,16 @@ void getWallInput( int matrixWhereToAssign[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ], 
 			getWallInput( matrixWhereToAssign, whichPlayer );
 		}
 	}
-}
+}*/
 
-void getInput( int matrixWhereToAssign[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ], player &currentPlayer, bool whichPlayer )
-{
-	char move;
-	cout << " Pentru a muta pionul apasati 'p' + ENTER : " << '\n';
-	cout << " Pentru a aseza un zid apasati 'w' + ENTER : " << '\n';
-	cin >> move;
-
-	if ( move == 'p' )
-	{
-		system( "CLS" );
-		printMatrix( matrixWhereToAssign );
-		movePawn( matrixWhereToAssign, currentPlayer, whichPlayer );
-	}
-	else
-		getWallInput( matrixWhereToAssign, whichPlayer );
-}
-
-void setNeededData( int matrixWhereToAssign[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ] )
+void setNeededData( int matrixWhereToAssign[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ], bool whichPlayer )
 {
 	firstPlayer.position.line = 1;
 	firstPlayer.position.column = 9;
+	firstPlayer.numberOfWallsLeft = secondPlayer.numberOfWallsLeft = 10;
 	secondPlayer.position.line = 17;
 	secondPlayer.position.column = 9;
 
-	assignUsedCell( matrixWhereToAssign, firstPlayer );
-	assignUsedCell( matrixWhereToAssign, secondPlayer );
-}
-
-void play1vs1()
-{
-	bool switchPlayers = true; // firstPlayer moves
-	setBorder( quoridorMatrix );
-	setInitialData( firstPlayer );
-	setInitialData( secondPlayer );
-	setNeededData( quoridorMatrix );
-
-	while ( ( firstPlayer.position.line != 17 ) && ( secondPlayer.position.line != 1 ) )
-	{
-		if ( switchPlayers == true )
-		{
-			system( "color B" );
-			getInput( quoridorMatrix, firstPlayer, switchPlayers);
-			system( "CLS" );
-			printMatrix( quoridorMatrix );
-			switchPlayers = false;
-		}
-		else
-		{
-			system( "color E" );
-			getInput( quoridorMatrix, secondPlayer, switchPlayers );
-			system( "CLS" );
-			printMatrix( quoridorMatrix );
-			switchPlayers = true;
-		}
-	}
+	assignUsedCell( matrixWhereToAssign, firstPlayer, whichPlayer  );
+	assignUsedCell( matrixWhereToAssign, secondPlayer, !whichPlayer );
 }
