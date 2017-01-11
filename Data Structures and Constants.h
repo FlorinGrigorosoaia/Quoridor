@@ -1,4 +1,5 @@
 #pragma once
+
 #define MAX_LENGTH_NAME 30
 #define NO_LIN_COL 19
 #define BORDER -1
@@ -8,6 +9,7 @@
 #define INCREASE 1
 #define STAND 0
 #define NO_DIRECTIONS 4 
+#define PAWN 5
 
 #define SQUARE_SIDE 25
 #define DIM_OF_WIN_OX 900
@@ -15,6 +17,11 @@
 #define DIM_OF_BUTTON_OX 230
 #define DIM_OF_BUTTON_OY 120
 #define FONT_SIZE 20
+
+sf::RectangleShape rectangles[ 10 ][ 10 ];
+sf::RectangleShape horizontalWalls[ 9 ][ 9 ];
+sf::RectangleShape verticalWalls[ 9 ][ 9 ];
+sf::Color brown;
 
 struct matrixPosition
 {
@@ -26,7 +33,7 @@ struct player
 {
 	matrixPosition position;
 	char nameOfPlayer[MAX_LENGTH_NAME];
-	int pawn;
+	int numberOfWallsLeft;
 };
 
 char possibleMoves[] = { 'u', 'r', 'd', 'l' };
