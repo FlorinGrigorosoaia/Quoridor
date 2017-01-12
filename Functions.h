@@ -77,29 +77,12 @@ void assignWall(int matrixWhereToAssign[NO_LIN_COL + 1][NO_LIN_COL + 1], matrixP
 	}
 }
 
-void moveOnCertainDirection(int matrixWhereToAssign[NO_LIN_COL + 1][NO_LIN_COL + 1], player &currentPlayer, int indexInMovementArray, bool whichPlayer)
-{
-	int newLine = currentPlayer.position.line + movementArray[indexInMovementArray].line;
-	int newColumn = currentPlayer.position.column + movementArray[indexInMovementArray].column;
-
-	
-}
-
 void movePawn(int matrixWhereToAssign[NO_LIN_COL + 1][NO_LIN_COL + 1], player &currentPlayer, bool whichPlayer, int newLine, int newColumn)
 {
 	assignFreeCell(matrixWhereToAssign, currentPlayer);
 
 	currentPlayer.position.line = newLine;
 	currentPlayer.position.column = newColumn;
-
-	if (newLine < currentPlayer.position.line)
-		moveOnCertainDirection(matrixWhereToAssign, currentPlayer, 0, whichPlayer);
-	else if (newColumn > currentPlayer.position.column)
-		moveOnCertainDirection(matrixWhereToAssign, currentPlayer, 1, whichPlayer);
-	else if (newLine > currentPlayer.position.line)
-		moveOnCertainDirection(matrixWhereToAssign, currentPlayer, 2, whichPlayer);
-	else if (newColumn < currentPlayer.position.column)
-		moveOnCertainDirection(matrixWhereToAssign, currentPlayer, 3, whichPlayer);
 
 	assignUsedCell(matrixWhereToAssign, currentPlayer, whichPlayer);
 }
