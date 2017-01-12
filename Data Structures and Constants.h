@@ -18,10 +18,13 @@
 #define DIM_OF_BUTTON_OY 120
 #define FONT_SIZE 20
 
-sf::RectangleShape rectangles[ 10 ][ 10 ];
-sf::RectangleShape horizontalWalls[ 9 ][ 9 ];
-sf::RectangleShape verticalWalls[ 9 ][ 9 ];
+sf::RectangleShape rectangles[10][10];
+sf::RectangleShape shadows[10][10];
+sf::RectangleShape horizontalWalls[9][9];
+sf::RectangleShape verticalWalls[9][9];
 sf::Color brown;
+sf::Color lightGreen;
+sf::Color lightRed;
 
 struct matrixPosition
 {
@@ -38,9 +41,9 @@ struct player
 
 char possibleMoves[] = { 'u', 'r', 'd', 'l' };
 
-int quoridorMatrix[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ];
+int quoridorMatrix[NO_LIN_COL + 1][NO_LIN_COL + 1];
 
-matrixPosition movementArray[ NO_DIRECTIONS ];
+matrixPosition movementArray[NO_DIRECTIONS];
 
 player firstPlayer;
 player secondPlayer;
