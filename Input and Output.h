@@ -11,8 +11,46 @@ void playOneVsOne();
 void playVsAI();
 void fourPlayers();
 
+void buildTexturesAndSprites()
+{
+	backgroundTexture.loadFromFile( "q.jpg" );
+	backgroundSprite.setTexture( backgroundTexture );
+	float x = 1;
+	float y = 1;
+	backgroundSprite.setScale( x, y );
+
+	x = 1;
+	y = 1;
+
+	oneVsOneTexture.loadFromFile( "q1.jpg" );
+	oneVsOneSprite.setTexture( oneVsOneTexture );
+	oneVsOneSprite.setScale( x, y );
+
+	x = 0.6;
+	y = 0.7;
+
+	vsAITexture.loadFromFile( "q2.jpeg" );
+	vsAISprite.setTexture( vsAITexture );
+	vsAISprite.setScale( x, y );
+
+	x = 0.8;
+	y = 0.8;
+
+	fourPlayersTexture.loadFromFile( "q3.jpg" );
+	fourPlayersSprite.setTexture( fourPlayersTexture );
+	fourPlayersSprite.setScale( x, y );
+}
+
 void buildColors()
 {
+	backgroundColor.r = 153;
+	backgroundColor.g = 76;
+	backgroundColor.b = 0;
+
+	darkBrown.r = 51;
+	darkBrown.g = 25;
+	darkBrown.b = 0;
+
 	Green.r = 0;
 	Green.g = 153;
 	Green.b = 0;
@@ -50,12 +88,12 @@ void buildTexts()
 	vsAIText.setCharacterSize(FONT_SIZE);
 	vsAIText.setStyle(sf::Text::Bold);
 	vsAIText.setPosition(375, 270);
-	vsAIText.setFillColor(sf::Color::Cyan);
+	vsAIText.setFillColor(sf::Color::White);
 
 	fourPlayersText.setCharacterSize(FONT_SIZE);
 	fourPlayersText.setStyle(sf::Text::Bold);
 	fourPlayersText.setPosition(358, 440);
-	fourPlayersText.setFillColor(sf::Color::Magenta);
+	fourPlayersText.setFillColor(sf::Color::White);
 
 	detailsText.setCharacterSize(15);
 	detailsText.setStyle(sf::Text::Italic);
@@ -143,31 +181,33 @@ void buildButtons()
 {
 	oneVsOneButton.setSize(sf::Vector2f(DIM_OF_BUTTON_OX, DIM_OF_BUTTON_OY));
 	oneVsOneButton.setPosition(335, 50);
-	oneVsOneButton.setFillColor(sf::Color::Blue);
+	oneVsOneButton.setFillColor( backgroundColor );
 
 	vsAIButton.setSize(sf::Vector2f(DIM_OF_BUTTON_OX, DIM_OF_BUTTON_OY));
 	vsAIButton.setPosition(335, 220);
-	vsAIButton.setFillColor(sf::Color::Blue);
+	vsAIButton.setFillColor( backgroundColor );
 
 	fourPlayersButton.setSize(sf::Vector2f(DIM_OF_BUTTON_OX, DIM_OF_BUTTON_OY));
 	fourPlayersButton.setPosition(335, 390);
-	fourPlayersButton.setFillColor(sf::Color::Blue);
+	fourPlayersButton.setFillColor( backgroundColor );
 
 	goBackToStartMenuButton.setSize(sf::Vector2f(150, 80));
 	goBackToStartMenuButton.setPosition(650, 600);
-	goBackToStartMenuButton.setFillColor(sf::Color::Green);
+	goBackToStartMenuButton.setFillColor( backgroundColor );
 
 	verticalButton.setSize(sf::Vector2f(200, 70));
 	verticalButton.setPosition(400, 100);
-	verticalButton.setFillColor(sf::Color::Red);
+	verticalButton.setFillColor( darkBrown );
 
 	horizontalButton.setSize(sf::Vector2f(200, 70));
 	horizontalButton.setPosition(400, 200);
-	horizontalButton.setFillColor(sf::Color::Red);
+	horizontalButton.setFillColor( darkBrown );
 }
 
 void printStartMenu()
 {
+	window.draw( backgroundSprite );
+
 	window.draw(oneVsOneButton);
 	window.draw(vsAIButton);
 	window.draw(fourPlayersButton);
@@ -304,6 +344,8 @@ void startMenu()
 
 void printQuoridorInOneVsOne(sf::RectangleShape whatToPrint[10][10])
 {
+	window.draw( oneVsOneSprite );
+
 	for (int i = 0; i < 9; i++)
 		for (int j = 0; j < 9; j++)
 			window.draw(whatToPrint[i][j]);
@@ -333,6 +375,8 @@ void printQuoridorInOneVsOne(sf::RectangleShape whatToPrint[10][10])
 
 void printQuoridorInFourPlayers(sf::RectangleShape whatToPrint[10][10])
 {
+	window.draw( fourPlayersSprite );
+
 	for (int i = 0; i < 9; i++)
 		for (int j = 0; j < 9; j++)
 			window.draw(whatToPrint[i][j]);
@@ -368,6 +412,8 @@ void printQuoridorInFourPlayers(sf::RectangleShape whatToPrint[10][10])
 
 void printQuoridorInVsAI(sf::RectangleShape whatToPrint[10][10])
 {
+	window.draw( vsAISprite );
+
 	for (int i = 0; i < 9; i++)
 		for (int j = 0; j < 9; j++)
 			window.draw(whatToPrint[i][j]);
@@ -576,12 +622,15 @@ void playOneVsOne()
 							assignWall(leeMatrix, verticalWallPosition, 'v', 1);
 							assignWall(newLeeMatrix, verticalWallPosition, 'v', 1);
 
-							if ((firstPlayer.numberOfWallsLeft > 0) && (leeOnLine(leeMatrix, secondPlayer, 1)) && (leeOnLine(newLeeMatrix, firstPlayer, 17)))
+							if ( ( firstPlayer.numberOfWallsLeft > 0 ) && ( leeOnLine( leeMatrix, secondPlayer, 1 ) ) && ( leeOnLine( newLeeMatrix, firstPlayer, 17 ) ) )
 							{
-								assignWall(quoridorMatrix, verticalWallPosition, 'v', 0);
-								firstPlayer.numberOfWallsLeft--;
-								firstPlayerWalls.setString(std::to_string(firstPlayer.numberOfWallsLeft));
-								switchPlayers = false;
+								if ( (quoridorMatrix[verticalWallPosition.line][verticalWallPosition.column] == 0) && ( quoridorMatrix[ verticalWallPosition.line + 1 ][ verticalWallPosition.column ] == 0 ) && ( quoridorMatrix[ verticalWallPosition.line + 2 ][ verticalWallPosition.column ] == 0 ) )
+								{
+									assignWall( quoridorMatrix, verticalWallPosition, 'v', 0 );
+									firstPlayer.numberOfWallsLeft--;
+									firstPlayerWalls.setString( std::to_string( firstPlayer.numberOfWallsLeft ) );
+									switchPlayers = false;
+								}
 							}
 						}
 						if ((x >= 400) && (x <= 600) && (y >= 200) && (y <= 270)) // horizontal
@@ -595,15 +644,18 @@ void playOneVsOne()
 
 							if ((firstPlayer.numberOfWallsLeft > 0) && (leeOnLine(leeMatrix, secondPlayer, 1)) && (leeOnLine(newLeeMatrix, firstPlayer, 17)))
 							{
-								assignWall(quoridorMatrix, horizontalWallPosition, 'h', 0);
-								firstPlayer.numberOfWallsLeft--;
-								firstPlayerWalls.setString(std::to_string(firstPlayer.numberOfWallsLeft));
-								switchPlayers = false;
+								if ( ( quoridorMatrix[ horizontalWallPosition.line ][ horizontalWallPosition.column ] == 0 ) && ( quoridorMatrix[ horizontalWallPosition.line ][ horizontalWallPosition.column + 1 ] == 0 ) && ( quoridorMatrix[ horizontalWallPosition.line ][ horizontalWallPosition.column + 2 ] == 0 ) )
+								{
+									assignWall( quoridorMatrix, horizontalWallPosition, 'h', 0 );
+									firstPlayer.numberOfWallsLeft--;
+									firstPlayerWalls.setString( std::to_string( firstPlayer.numberOfWallsLeft ) );
+									switchPlayers = false;
+								}
 							}
 						}
 						buttonForWallPressed = false;
-						verticalButton.setFillColor(sf::Color::Red);
-						horizontalButton.setFillColor(sf::Color::Red);
+						verticalButton.setFillColor(darkBrown);
+						horizontalButton.setFillColor( darkBrown );
 					}
 					else
 					{
@@ -619,10 +671,13 @@ void playOneVsOne()
 
 							if ((secondPlayer.numberOfWallsLeft > 0) && (leeOnLine(leeMatrix, firstPlayer, 17)) && (leeOnLine(newLeeMatrix, secondPlayer, 1)))
 							{
-								assignWall(quoridorMatrix, verticalWallPosition, 'v', 0);
-								secondPlayer.numberOfWallsLeft--;
-								secondPlayerWalls.setString(std::to_string(secondPlayer.numberOfWallsLeft));
-								switchPlayers = true;
+								if ( ( quoridorMatrix[ verticalWallPosition.line ][ verticalWallPosition.column ] == 0 ) && ( quoridorMatrix[ verticalWallPosition.line + 1 ][ verticalWallPosition.column ] == 0 ) && ( quoridorMatrix[ verticalWallPosition.line + 2 ][ verticalWallPosition.column ] == 0 ) )
+								{
+									assignWall( quoridorMatrix, verticalWallPosition, 'v', 0 );
+									secondPlayer.numberOfWallsLeft--;
+									secondPlayerWalls.setString( std::to_string( secondPlayer.numberOfWallsLeft ) );
+									switchPlayers = true;
+								}
 							}
 						}
 						if ((x >= 400) && (x <= 600) && (y >= 200) && (y <= 270)) // horizontal
@@ -636,15 +691,18 @@ void playOneVsOne()
 
 							if ((secondPlayer.numberOfWallsLeft > 0) && (leeOnLine(leeMatrix, firstPlayer, 17)) && (leeOnLine(newLeeMatrix, secondPlayer, 1)))
 							{
-								assignWall(quoridorMatrix, horizontalWallPosition, 'h', 0);
-								secondPlayer.numberOfWallsLeft--;
-								secondPlayerWalls.setString(std::to_string(secondPlayer.numberOfWallsLeft));
-								switchPlayers = true;
+								if ( ( quoridorMatrix[ horizontalWallPosition.line ][ horizontalWallPosition.column ] == 0 ) && ( quoridorMatrix[ horizontalWallPosition.line ][ horizontalWallPosition.column + 1 ] == 0 ) && ( quoridorMatrix[ horizontalWallPosition.line ][ horizontalWallPosition.column + 2 ] == 0 ) )
+								{
+									assignWall( quoridorMatrix, horizontalWallPosition, 'h', 0 );
+									secondPlayer.numberOfWallsLeft--;
+									secondPlayerWalls.setString( std::to_string( secondPlayer.numberOfWallsLeft ) );
+									switchPlayers = true;
+								}
 							}
 						}
 						buttonForWallPressed = false;
-						verticalButton.setFillColor(sf::Color::Red);
-						horizontalButton.setFillColor(sf::Color::Red);
+						verticalButton.setFillColor( darkBrown );
+						horizontalButton.setFillColor( darkBrown );
 					}
 				}
 
@@ -661,13 +719,19 @@ void playOneVsOne()
 						// apelez ca vrea sa mute pionul
 						if (switchPlayers == true)
 						{
-							movePawn(quoridorMatrix, firstPlayer, switchPlayers, 2 * i + 1, 2 * j + 1, false);
-							switchPlayers = false;
+							if ( shadows[ i ][ j ].getFillColor() == lightRed )
+							{
+								movePawn( quoridorMatrix, firstPlayer, switchPlayers, 2 * i + 1, 2 * j + 1, false );
+								switchPlayers = false;
+							}
 						}
 						else
 						{
-							movePawn(quoridorMatrix, secondPlayer, switchPlayers, 2 * i + 1, 2 * j + 1, false);
-							switchPlayers = true;
+							if ( shadows[ i ][ j ].getFillColor() == lightGreen )
+							{
+								movePawn( quoridorMatrix, secondPlayer, switchPlayers, 2 * i + 1, 2 * j + 1, false );
+								switchPlayers = true;
+							}
 						}
 					}
 					if (x > offsetX + 25 && x < offsetX + 25 + 15 && y > offsetY + 25 && y < offsetY + 25 + 15)
@@ -747,33 +811,51 @@ void sendToAssignWallWithDirection(int &whichPlayer, int x, int y, matrixPositio
 void sendToAssignWall(int &whichPlayer, int x, int y, matrixPosition verticalWallPosition, matrixPosition horizontalWallPosition)
 {
 	if ((x >= 400) && (x <= 600) && (y >= 100) && (y <= 170)) // vertical
-		sendToAssignWallWithDirection(whichPlayer, x, y, verticalWallPosition, 'v');
+		if ( ( quoridorMatrix[ verticalWallPosition.line ][ verticalWallPosition.column ] == 0 ) && ( quoridorMatrix[ verticalWallPosition.line + 1 ][ verticalWallPosition.column ] == 0 ) && ( quoridorMatrix[ verticalWallPosition.line + 2 ][ verticalWallPosition.column ] == 0 ) )
+			sendToAssignWallWithDirection(whichPlayer, x, y, verticalWallPosition, 'v');
 
 	if ((x >= 400) && (x <= 600) && (y >= 200) && (y <= 270)) // horizontal
-		sendToAssignWallWithDirection(whichPlayer, x, y, horizontalWallPosition, 'h');
+		if ( ( quoridorMatrix[ horizontalWallPosition.line ][ horizontalWallPosition.column ] == 0 ) && ( quoridorMatrix[ horizontalWallPosition.line ][ horizontalWallPosition.column + 1 ] == 0 ) && ( quoridorMatrix[ horizontalWallPosition.line ][ horizontalWallPosition.column + 2 ] == 0 ) )
+			sendToAssignWallWithDirection(whichPlayer, x, y, horizontalWallPosition, 'h');
 }
 
 void sendToMovePawn(int &whichPlayer, int i, int j)
 {
 	if (whichPlayer % 4 == 1)
 	{
-		movePawn(quoridorMatrix, firstPlayer, whichPlayer, 2 * i + 1, 2 * j + 1, false);
-		whichPlayer++;
+		if ( shadows[ i ][ j ].getFillColor() == lightRed )
+		{
+			movePawn(quoridorMatrix, firstPlayer, whichPlayer, 2 * i + 1, 2 * j + 1, false);
+			whichPlayer++;
+		}
+		
 	}
 	else if (whichPlayer % 4 == 0)
 	{
-		movePawn(quoridorMatrix, secondPlayer, whichPlayer, 2 * i + 1, 2 * j + 1, false);
-		whichPlayer++;
+		if ( shadows[ i ][ j ].getFillColor() == lightGreen )
+		{
+			movePawn(quoridorMatrix, secondPlayer, whichPlayer, 2 * i + 1, 2 * j + 1, false);
+			whichPlayer++;
+		}
+
 	}
 	else if (whichPlayer % 4 == 2)
 	{
-		movePawn(quoridorMatrix, thirdPlayer, whichPlayer, 2 * i + 1, 2 * j + 1, false);
-		whichPlayer++;
+		if ( shadows[ i ][ j ].getFillColor() == lightYellow )
+		{
+			movePawn(quoridorMatrix, thirdPlayer, whichPlayer, 2 * i + 1, 2 * j + 1, false);
+			whichPlayer++;
+		}
+
 	}
 	else
 	{
-		movePawn(quoridorMatrix, fourthPlayer, whichPlayer, 2 * i + 1, 2 * j + 1, false);
-		whichPlayer = 0;
+		if ( shadows[ i ][ j ].getFillColor() == sf::Color::Cyan )
+		{
+			movePawn(quoridorMatrix, fourthPlayer, whichPlayer, 2 * i + 1, 2 * j + 1, false);
+			whichPlayer = 0;
+		}
+
 	}
 }
 
@@ -909,8 +991,8 @@ void fourPlayers()
 				{
 					sendToAssignWall(switchPlayers, x, y, verticalWallPosition, horizontalWallPosition);
 					buttonForWallPressed = false;
-					verticalButton.setFillColor(sf::Color::Red);
-					horizontalButton.setFillColor(sf::Color::Red);
+					verticalButton.setFillColor( darkBrown );
+					horizontalButton.setFillColor( darkBrown );
 				}
 
 				if (x >= 12 && x <= (15 + 25) * 9 + 12 && y >= 10 && y <= (15 + 25) * 9 + 10)
@@ -1216,10 +1298,13 @@ void playVsAI()
 
 								if ((secondPlayer.numberOfWallsLeft > 0) && (leeOnLine(leeMatrix, secondPlayer, 1)) && (leeOnLine(newLeeMatrix, AI, 17)))
 								{
-									assignWall(quoridorMatrix, verticalWallPosition, 'v', 0);
-									secondPlayer.numberOfWallsLeft--;
-									secondPlayerWalls.setString(std::to_string(secondPlayer.numberOfWallsLeft));
-									switchPlayers = true;
+									if ( ( quoridorMatrix[ verticalWallPosition.line ][ verticalWallPosition.column ] == 0 ) && ( quoridorMatrix[ verticalWallPosition.line + 1 ][ verticalWallPosition.column ] == 0 ) && ( quoridorMatrix[ verticalWallPosition.line + 2 ][ verticalWallPosition.column ] == 0 ) )
+									{
+										assignWall( quoridorMatrix, verticalWallPosition, 'v', 0 );
+										secondPlayer.numberOfWallsLeft--;
+										secondPlayerWalls.setString( std::to_string( secondPlayer.numberOfWallsLeft ) );
+										switchPlayers = true;
+									}
 								}
 							}
 							if ((x >= 400) && (x <= 600) && (y >= 200) && (y <= 270)) // horizontal
@@ -1233,15 +1318,18 @@ void playVsAI()
 
 								if ((secondPlayer.numberOfWallsLeft > 0) && (leeOnLine(leeMatrix, secondPlayer, 1)) && (leeOnLine(newLeeMatrix, AI, 17)))
 								{
-									assignWall(quoridorMatrix, horizontalWallPosition, 'h', 0);
-									secondPlayer.numberOfWallsLeft--;
-									secondPlayerWalls.setString(std::to_string(secondPlayer.numberOfWallsLeft));
-									switchPlayers = true;
+									if ( ( quoridorMatrix[ horizontalWallPosition.line ][ horizontalWallPosition.column ] == 0 ) && ( quoridorMatrix[ horizontalWallPosition.line ][ horizontalWallPosition.column + 1 ] == 0 ) && ( quoridorMatrix[ horizontalWallPosition.line ][ horizontalWallPosition.column + 2 ] == 0 ) )
+									{
+										assignWall( quoridorMatrix, horizontalWallPosition, 'h', 0 );
+										secondPlayer.numberOfWallsLeft--;
+										secondPlayerWalls.setString( std::to_string( secondPlayer.numberOfWallsLeft ) );
+										switchPlayers = true;
+									}
 								}
 							}
 							buttonForWallPressed = false;
-							verticalButton.setFillColor(sf::Color::Red);
-							horizontalButton.setFillColor(sf::Color::Red);
+							verticalButton.setFillColor( darkBrown );
+							horizontalButton.setFillColor( darkBrown );
 						}
 					}
 					if (x >= 12 && x <= (15 + 25) * 9 + 12 && y >= 10 && y <= (15 + 25) * 9 + 10)
@@ -1257,8 +1345,11 @@ void playVsAI()
 							// apelez ca vrea sa mute pionul
 							if (switchPlayers == false)
 							{
-								movePawn(quoridorMatrix, secondPlayer, switchPlayers, 2 * i + 1, 2 * j + 1, false);
-								switchPlayers = true;
+								if ( shadows[ i ][ j ].getFillColor() == lightGreen )
+								{
+									movePawn( quoridorMatrix, secondPlayer, switchPlayers, 2 * i + 1, 2 * j + 1, false );
+									switchPlayers = true;
+								}
 							}
 						}
 						if (x > offsetX + 25 && x < offsetX + 25 + 15 && y > offsetY + 25 && y < offsetY + 25 + 15)
