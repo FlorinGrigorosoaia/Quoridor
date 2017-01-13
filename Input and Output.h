@@ -5,7 +5,10 @@
 
 void printQuoridorInOneVsOne(sf::RectangleShape whatToPrint[10][10]);
 void printQuoridorInFourPlayers(sf::RectangleShape whatToPrint[10][10]);
+void printQuoridorInVsAI(sf::RectangleShape whatToPrint[10][10]);
+
 void playOneVsOne();
+void playVsAI();
 void fourPlayers();
 
 void buildColors()
@@ -29,6 +32,10 @@ void buildColors()
 	lightYellow.r = 255;
 	lightYellow.g = 255;
 	lightYellow.b = 153;
+
+	purple.r = 102;
+	purple.g = 0;
+	purple.b = 102;
 }
 
 void buildTexts()
@@ -82,6 +89,10 @@ void buildTexts()
 	fourthPlayerNumberOfWallsLeft.setStyle(sf::Text::Bold);
 	fourthPlayerNumberOfWallsLeft.setPosition(650, 415);
 
+	AINumberOfWallsLeft.setCharacterSize(15);
+	AINumberOfWallsLeft.setStyle(sf::Text::Bold);
+	AINumberOfWallsLeft.setPosition(650, 115);
+
 	firstPlayerWalls.setCharacterSize(15);
 	firstPlayerWalls.setStyle(sf::Text::Bold);
 	firstPlayerWalls.setPosition(725, 132);
@@ -97,6 +108,10 @@ void buildTexts()
 	fourthPlayerWalls.setCharacterSize(15);
 	fourthPlayerWalls.setStyle(sf::Text::Bold);
 	fourthPlayerWalls.setPosition(725, 432);
+
+	AIWalls.setCharacterSize(15);
+	AIWalls.setStyle(sf::Text::Bold);
+	AIWalls.setPosition(725, 132);
 
 	firstPlayerWon.setCharacterSize(40);
 	firstPlayerWon.setStyle(sf::Text::Bold);
@@ -117,6 +132,11 @@ void buildTexts()
 	fourthPlayerWon.setStyle(sf::Text::Bold);
 	fourthPlayerWon.setPosition(300, 500);
 	fourthPlayerWon.setFillColor(sf::Color::Transparent);
+
+	AIWon.setCharacterSize(40);
+	AIWon.setStyle(sf::Text::Bold);
+	AIWon.setPosition(300, 500);
+	AIWon.setFillColor(sf::Color::Transparent);
 }
 
 void buildButtons()
@@ -191,7 +211,7 @@ void buildHorizontalWalls()
 	{
 		horizontalWalls[i][0].setPosition(axaX, axaY);
 		horizontalWalls[i][0].setSize(sf::Vector2f(65, 15));
-		horizontalWalls[i][0].setFillColor(sf::Color::Transparent);
+		horizontalWalls[ i ][ 0 ].setFillColor( sf::Color::Transparent );
 		for (int j = 1; j < 8; j++)
 		{
 			axaX += adder;
@@ -240,6 +260,8 @@ void initializeWonText()
 	secondPlayerWon.setFillColor(sf::Color::Transparent);
 	thirdPlayerWon.setFillColor(sf::Color::Transparent);
 	fourthPlayerWon.setFillColor(sf::Color::Transparent);
+	AIWon.setFillColor(sf::Color::Transparent);
+
 }
 
 void initializeWalls()
@@ -269,6 +291,8 @@ void startMenu()
 					playOneVsOne();
 				else if ((mouse.x >= 335) && (mouse.x <= 335 + DIM_OF_BUTTON_OX) && (mouse.y >= 390) && (mouse.y <= 390 + DIM_OF_BUTTON_OY))
 					fourPlayers();
+				else if ((mouse.x >= 335) && (mouse.x <= 335 + DIM_OF_BUTTON_OX) && (mouse.y >= 220) && (mouse.y <= 220 + DIM_OF_BUTTON_OY))
+					playVsAI();
 			}
 		}
 
@@ -340,6 +364,35 @@ void printQuoridorInFourPlayers(sf::RectangleShape whatToPrint[10][10])
 	window.draw(secondPlayerWon);
 	window.draw(thirdPlayerWon);
 	window.draw(fourthPlayerWon);
+}
+
+void printQuoridorInVsAI(sf::RectangleShape whatToPrint[10][10])
+{
+	for (int i = 0; i < 9; i++)
+		for (int j = 0; j < 9; j++)
+			window.draw(whatToPrint[i][j]);
+	for (int i = 0; i < 8; i++)
+		for (int j = 0; j < 8; j++)
+			window.draw(verticalWalls[i][j]);
+	for (int i = 0; i < 8; i++)
+		for (int j = 0; j < 8; j++)
+			window.draw(horizontalWalls[i][j]);
+
+	window.draw(goBackToStartMenuButton);
+	window.draw(goBackToStartMenuText);
+	window.draw(verticalButton);
+	window.draw(horizontalButton);
+	window.draw(verticalButtonText);
+	window.draw(horizontalButtonText);
+
+	window.draw(AINumberOfWallsLeft);
+	window.draw(secondPlayerNumberOfWallsLeft);
+
+	window.draw(AIWalls);
+	window.draw(secondPlayerWalls);
+
+	window.draw(AIWon);
+	window.draw(secondPlayerWon);
 }
 
 void playOneVsOne()
@@ -608,12 +661,12 @@ void playOneVsOne()
 						// apelez ca vrea sa mute pionul
 						if (switchPlayers == true)
 						{
-							movePawn(quoridorMatrix, firstPlayer, switchPlayers, 2 * i + 1, 2 * j + 1);
+							movePawn(quoridorMatrix, firstPlayer, switchPlayers, 2 * i + 1, 2 * j + 1, false);
 							switchPlayers = false;
 						}
 						else
 						{
-							movePawn(quoridorMatrix, secondPlayer, switchPlayers, 2 * i + 1, 2 * j + 1);
+							movePawn(quoridorMatrix, secondPlayer, switchPlayers, 2 * i + 1, 2 * j + 1, false);
 							switchPlayers = true;
 						}
 					}
@@ -704,22 +757,22 @@ void sendToMovePawn(int &whichPlayer, int i, int j)
 {
 	if (whichPlayer % 4 == 1)
 	{
-		movePawn(quoridorMatrix, firstPlayer, whichPlayer, 2 * i + 1, 2 * j + 1);
+		movePawn(quoridorMatrix, firstPlayer, whichPlayer, 2 * i + 1, 2 * j + 1, false);
 		whichPlayer++;
 	}
 	else if (whichPlayer % 4 == 0)
 	{
-		movePawn(quoridorMatrix, secondPlayer, whichPlayer, 2 * i + 1, 2 * j + 1);
+		movePawn(quoridorMatrix, secondPlayer, whichPlayer, 2 * i + 1, 2 * j + 1, false);
 		whichPlayer++;
 	}
 	else if (whichPlayer % 4 == 2)
 	{
-		movePawn(quoridorMatrix, thirdPlayer, whichPlayer, 2 * i + 1, 2 * j + 1);
+		movePawn(quoridorMatrix, thirdPlayer, whichPlayer, 2 * i + 1, 2 * j + 1, false);
 		whichPlayer++;
 	}
 	else
 	{
-		movePawn(quoridorMatrix, fourthPlayer, whichPlayer, 2 * i + 1, 2 * j + 1);
+		movePawn(quoridorMatrix, fourthPlayer, whichPlayer, 2 * i + 1, 2 * j + 1, false);
 		whichPlayer = 0;
 	}
 }
@@ -896,6 +949,340 @@ void fourPlayers()
 				thirdPlayerWon.setFillColor(sf::Color::Yellow);
 			if (fourthPlayer.position.column == 1)
 				fourthPlayerWon.setFillColor(sf::Color::Blue);
+			if (event.type == sf::Event::Closed)
+				window.close();
+		}
+	}
+}
+
+void playVsAI()
+{
+	initializeRectangles();
+	initializeWonText();
+	initializeWalls();
+
+	bool buttonForWallPressed = false;
+	matrixPosition verticalWallPosition;
+	matrixPosition horizontalWallPosition;
+	bool switchPlayers = false;
+	setBorder(quoridorMatrix);
+	setNeededDataVsAI(quoridorMatrix, switchPlayers);
+	secondPlayerWalls.setString(std::to_string(secondPlayer.numberOfWallsLeft));
+	AIWalls.setString(std::to_string(AI.numberOfWallsLeft));
+
+	while (window.isOpen())
+	{
+		sf::Event event;
+		while (window.pollEvent(event))
+		{
+			copyTwoRectangles(shadows, rectangles);
+
+			if (switchPlayers == false)
+			{
+				for (int i = 0; i <= 3; i++)
+				{
+					int newLine = secondPlayer.position.line + movementArray[i].line;
+					int newColumn = secondPlayer.position.column + movementArray[i].column;
+
+					if (quoridorMatrix[newLine][newColumn] == 0)
+					{
+						newLine += movementArray[i].line;
+						newColumn += movementArray[i].column;
+
+						if (quoridorMatrix[newLine][newColumn] == 0)
+							shadows[(newLine - 1) / 2][(newColumn - 1) / 2].setFillColor(lightGreen);
+						else
+						{
+							newLine += movementArray[i].line;
+							newColumn += movementArray[i].column;
+
+							if (quoridorMatrix[newLine][newColumn] == 0)
+							{
+								newLine += movementArray[i].line;
+								newColumn += movementArray[i].column;
+
+								shadows[(newLine - 1) / 2][(newColumn - 1) / 2].setFillColor(lightGreen);
+							}
+							else
+							{
+								newLine -= movementArray[i].line;
+								newColumn -= movementArray[i].column;
+
+								if ((i == 0) || (i == 2))
+								{
+									for (int j = 1; j <= 3; j += 2)
+									{
+										int nextLine = newLine + movementArray[j].line;
+										int nextColumn = newColumn + movementArray[j].column;
+
+										if (quoridorMatrix[nextLine][nextColumn] == 0)
+										{
+											nextLine += movementArray[j].line;
+											nextColumn += movementArray[j].column;
+
+											shadows[(nextLine - 1) / 2][(nextColumn - 1) / 2].setFillColor(lightGreen);
+										}
+									}
+								}
+								else
+								{
+									for (int j = 0; j <= 2; j += 2)
+									{
+										int nextLine = newLine + movementArray[j].line;
+										int nextColumn = newColumn + movementArray[j].column;
+
+										if (quoridorMatrix[newLine][newColumn] == 0)
+										{
+											nextLine += movementArray[j].line;
+											nextColumn += movementArray[j].column;
+
+											shadows[(nextLine - 1) / 2][(nextColumn - 1) / 2].setFillColor(lightGreen);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				for (int i = 0; i <= 3; i++)
+				{
+					int newLine = AI.position.line + movementArray[i].line;
+					int newColumn = AI.position.column + movementArray[i].column;
+					if (quoridorMatrix[newLine][newColumn] == 0)
+					{
+						newLine += movementArray[i].line;
+						newColumn += movementArray[i].column;
+
+						if (quoridorMatrix[newLine][newColumn] == 0)
+							shadows[(newLine - 1) / 2][(newColumn - 1) / 2].setFillColor(sf::Color::Magenta);
+						else
+						{
+							newLine += movementArray[i].line;
+							newColumn += movementArray[i].column;
+
+							if (quoridorMatrix[newLine][newColumn] == 0)
+							{
+								newLine += movementArray[i].line;
+								newColumn += movementArray[i].column;
+
+								shadows[(newLine - 1) / 2][(newColumn - 1) / 2].setFillColor(sf::Color::Magenta);
+							}
+							else
+							{
+								newLine -= movementArray[i].line;
+								newColumn -= movementArray[i].column;
+
+								if ((i == 0) || (i == 2))
+								{
+									for (int j = 1; j <= 3; j += 2)
+									{
+										int nextLine = newLine + movementArray[j].line;
+										int nextColumn = newColumn + movementArray[j].column;
+
+										if (quoridorMatrix[nextLine][nextColumn] == 0)
+										{
+											nextLine += movementArray[j].line;
+											nextColumn += movementArray[j].column;
+
+											shadows[(nextLine - 1) / 2][(nextColumn - 1) / 2].setFillColor(sf::Color::Magenta);
+										}
+									}
+								}
+								else
+								{
+									for (int j = 0; j <= 2; j += 2)
+									{
+										int nextLine = newLine + movementArray[j].line;
+										int nextColumn = newColumn + movementArray[j].column;
+
+										if (quoridorMatrix[nextLine][nextColumn] == 0)
+										{
+											nextLine += movementArray[j].line;
+											nextColumn += movementArray[j].column;
+
+											shadows[(nextLine - 1) / 2][(nextColumn - 1) / 2].setFillColor(sf::Color::Magenta);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			window.clear();
+			printQuoridorInVsAI(shadows);
+			window.display();
+
+			if (switchPlayers == true)
+			{
+				int lengthOfAI = 0;
+				int lengthOfSecondPlayer = 0;
+				int leeMatrix[NO_LIN_COL + 1][NO_LIN_COL + 1];
+				int nextLine = 0;
+				int nextColumn = 0;
+
+				copyTwoMatrices(quoridorMatrix, leeMatrix);
+				lengthOfSecondPlayer = findLength(leeMatrix, secondPlayer, 1, nextLine, nextColumn, false );
+
+				copyTwoMatrices(quoridorMatrix, leeMatrix);
+				lengthOfAI = findLength(leeMatrix, AI, 17, nextLine, nextColumn, false );
+
+				if ( (lengthOfAI <= lengthOfSecondPlayer) || ( AI.numberOfWallsLeft == 0) )
+					movePawn(quoridorMatrix, AI, switchPlayers, nextLine, nextColumn, true);
+				else 
+				{
+					int maximumLengthFound = 0;
+					matrixPosition wallPosition;
+					char wallOrientation;
+					int l, c;
+
+					for (int i = 2; i <= 16; i += 2)
+						for (int j = 1; j <= 15; j += 2) {
+							matrixPosition startingWall;
+							startingWall.line = i;
+							startingWall.column = j;
+							int leeMatrix[NO_LIN_COL + 1][NO_LIN_COL + 1];
+							copyTwoMatrices(quoridorMatrix, leeMatrix);
+
+							assignWall(leeMatrix, startingWall, 'h', true);
+							int lengthFound = findLength(leeMatrix, secondPlayer, 1, l, c, true);
+
+							if ( (lengthFound > maximumLengthFound) && ( quoridorMatrix[startingWall.line][startingWall.column] == 0) && (quoridorMatrix[startingWall.line][startingWall.column + 1] == 0) && (quoridorMatrix[startingWall.line][startingWall.column + 2] == 0))
+							{
+								maximumLengthFound = lengthFound;
+								wallPosition.line = startingWall.line;
+								wallPosition.column = startingWall.column;
+								wallOrientation = 'h';
+							}
+						}
+
+					for (int i = 1; i <= 16; i += 2)
+						for (int j = 2; j <= 16; j += 2) {
+							matrixPosition startingWall;
+							startingWall.line = i;
+							startingWall.column = j;
+							int leeMatrix[NO_LIN_COL + 1][NO_LIN_COL + 1];
+							copyTwoMatrices(quoridorMatrix, leeMatrix);
+
+							assignWall(leeMatrix, startingWall, 'v', true);
+							int lengthFound = findLength(leeMatrix, secondPlayer, 1, l, c, true);
+
+							if ((lengthFound > maximumLengthFound) && (quoridorMatrix[startingWall.line][startingWall.column] == 0) && (quoridorMatrix[startingWall.line + 1][startingWall.column] == 0) && (quoridorMatrix[startingWall.line + 2][startingWall.column] == 0))
+							{
+								maximumLengthFound = lengthFound;
+								wallPosition.line = startingWall.line;
+								wallPosition.column = startingWall.column;
+								wallOrientation = 'v';
+							}
+						}
+
+					if ( maximumLengthFound > lengthOfSecondPlayer )
+					{
+						AI.numberOfWallsLeft--;
+						AIWalls.setString( std::to_string( AI.numberOfWallsLeft ) );
+						assignWall( quoridorMatrix, wallPosition, wallOrientation, false );
+					}
+					else
+						movePawn( quoridorMatrix, AI, switchPlayers, nextLine, nextColumn, true );
+				}
+
+				switchPlayers = false;
+			}
+			else
+			{
+				if (event.type == sf::Event::MouseButtonPressed)
+				{
+					sf::Vector2i mouse = sf::Mouse::getPosition(window);
+					int x = mouse.x;
+					int y = mouse.y;
+
+					if (buttonForWallPressed)
+					{
+						if (switchPlayers == false)
+						{
+							// before assignWall should check if the wall position is correct ( lee )
+							if ((x >= 400) && (x <= 600) && (y >= 100) && (y <= 170)) // vertical
+							{
+								int leeMatrix[NO_LIN_COL + 1][NO_LIN_COL + 1];
+								int newLeeMatrix[NO_LIN_COL + 1][NO_LIN_COL + 1];
+								copyTwoMatrices(quoridorMatrix, leeMatrix);
+								copyTwoMatrices(quoridorMatrix, newLeeMatrix);
+								assignWall(leeMatrix, verticalWallPosition, 'v', 1);
+								assignWall(newLeeMatrix, verticalWallPosition, 'v', 1);
+
+								if ((secondPlayer.numberOfWallsLeft > 0) && (leeOnLine(leeMatrix, secondPlayer, 1)) && (leeOnLine(newLeeMatrix, AI, 17)))
+								{
+									assignWall(quoridorMatrix, verticalWallPosition, 'v', 0);
+									secondPlayer.numberOfWallsLeft--;
+									secondPlayerWalls.setString(std::to_string(secondPlayer.numberOfWallsLeft));
+									switchPlayers = true;
+								}
+							}
+							if ((x >= 400) && (x <= 600) && (y >= 200) && (y <= 270)) // horizontal
+							{
+								int leeMatrix[NO_LIN_COL + 1][NO_LIN_COL + 1];
+								int newLeeMatrix[NO_LIN_COL + 1][NO_LIN_COL + 1];
+								copyTwoMatrices(quoridorMatrix, leeMatrix);
+								copyTwoMatrices(quoridorMatrix, newLeeMatrix);
+								assignWall(leeMatrix, horizontalWallPosition, 'h', 1);
+								assignWall(newLeeMatrix, horizontalWallPosition, 'v', 1);
+
+								if ((secondPlayer.numberOfWallsLeft > 0) && (leeOnLine(leeMatrix, secondPlayer, 1)) && (leeOnLine(newLeeMatrix, AI, 17)))
+								{
+									assignWall(quoridorMatrix, horizontalWallPosition, 'h', 0);
+									secondPlayer.numberOfWallsLeft--;
+									secondPlayerWalls.setString(std::to_string(secondPlayer.numberOfWallsLeft));
+									switchPlayers = true;
+								}
+							}
+							buttonForWallPressed = false;
+							verticalButton.setFillColor(sf::Color::Red);
+							horizontalButton.setFillColor(sf::Color::Red);
+						}
+					}
+					if (x >= 12 && x <= (15 + 25) * 9 + 12 && y >= 10 && y <= (15 + 25) * 9 + 10)
+					{
+						int j = (x - 12) / (25 + 15);
+						int i = (y - 10) / (25 + 15);
+
+						int offsetX = j * (25 + 15) + 12;
+						int offsetY = i * (25 + 15) + 10;
+
+						if (x > offsetX + 0 && x < offsetX + 25 && y > offsetY + 0 && y < offsetY + 25)
+						{
+							// apelez ca vrea sa mute pionul
+							if (switchPlayers == false)
+							{
+								movePawn(quoridorMatrix, secondPlayer, switchPlayers, 2 * i + 1, 2 * j + 1, false);
+								switchPlayers = true;
+							}
+						}
+						if (x > offsetX + 25 && x < offsetX + 25 + 15 && y > offsetY + 25 && y < offsetY + 25 + 15)
+						{
+							verticalWallPosition.line = 2 * i + 1;
+							verticalWallPosition.column = 2 * j + 2;
+							horizontalWallPosition.line = 2 * i + 2;
+							horizontalWallPosition.column = 2 * j + 1;
+							buttonForWallPressed = true;
+							verticalButton.setFillColor(brown);
+							horizontalButton.setFillColor(brown);
+						}
+
+
+					}
+					else if ((x >= 650) && (y >= 600) && (x <= 800) && (y <= 680)) // go back
+						startMenu();
+				}
+			}
+
+			if (AI.position.line == 17)
+				AIWon.setFillColor(purple);
+			if (secondPlayer.position.line == 1)
+				secondPlayerWon.setFillColor(Green);
 			if (event.type == sf::Event::Closed)
 				window.close();
 		}
