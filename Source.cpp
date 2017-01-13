@@ -5,10 +5,11 @@
 
 
 
-int main()
+int main() 
 {
+	buildTexturesAndSprites();
 	buildColors();
-	initializeMovementArray(movementArray);
+	initializeMovementArray( movementArray );
 	buildButtons();
 	buildTexts();
 	buildRectangles();
