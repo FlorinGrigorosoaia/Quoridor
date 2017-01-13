@@ -23,6 +23,8 @@ sf::RectangleShape shadows[10][10];
 sf::RectangleShape horizontalWalls[9][9];
 sf::RectangleShape verticalWalls[9][9];
 
+sf::Color backgroundColor;
+sf::Color darkBrown;
 sf::Color brown;
 sf::Color lightGreen;
 sf::Color lightRed;
@@ -91,3 +93,13 @@ sf::Text secondPlayerWon("Green has won", font);
 sf::Text thirdPlayerWon("Yellow has won", font);
 sf::Text fourthPlayerWon("Blue has won", font);
 sf::Text AIWon("AI has won", font);
+
+sf::Texture backgroundTexture;
+sf::Texture oneVsOneTexture;
+sf::Texture fourPlayersTexture;
+sf::Texture vsAITexture;
+
+sf::Sprite backgroundSprite;
+sf::Sprite oneVsOneSprite;
+sf::Sprite fourPlayersSprite;
+sf::Sprite vsAISprite;
