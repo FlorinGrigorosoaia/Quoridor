@@ -640,7 +640,7 @@ void playOneVsOne()
 							copyTwoMatrices(quoridorMatrix, leeMatrix);
 							copyTwoMatrices(quoridorMatrix, newLeeMatrix);
 							assignWall(leeMatrix, horizontalWallPosition, 'h', 1);
-							assignWall(newLeeMatrix, horizontalWallPosition, 'v', 1);
+							assignWall(newLeeMatrix, horizontalWallPosition, 'h', 1);
 
 							if ((firstPlayer.numberOfWallsLeft > 0) && (leeOnLine(leeMatrix, secondPlayer, 1)) && (leeOnLine(newLeeMatrix, firstPlayer, 17)))
 							{
@@ -687,7 +687,7 @@ void playOneVsOne()
 							copyTwoMatrices(quoridorMatrix, leeMatrix);
 							copyTwoMatrices(quoridorMatrix, newLeeMatrix);
 							assignWall(leeMatrix, horizontalWallPosition, 'h', 1);
-							assignWall(newLeeMatrix, horizontalWallPosition, 'v', 1);
+							assignWall(newLeeMatrix, horizontalWallPosition, 'h', 1);
 
 							if ((secondPlayer.numberOfWallsLeft > 0) && (leeOnLine(leeMatrix, firstPlayer, 17)) && (leeOnLine(newLeeMatrix, secondPlayer, 1)))
 							{
@@ -771,9 +771,9 @@ void sendToAssignWallWithDirection(int &whichPlayer, int x, int y, matrixPositio
 	copyTwoMatrices(quoridorMatrix, fourthLeeMatrix);
 
 	assignWall(firstLeeMatrix, wallPosition, direction, 1);
-	assignWall(firstLeeMatrix, wallPosition, direction, 1);
-	assignWall(firstLeeMatrix, wallPosition, direction, 1);
-	assignWall(firstLeeMatrix, wallPosition, direction, 1);
+	assignWall(secondLeeMatrix, wallPosition, direction, 1);
+	assignWall(thirdLeeMatrix, wallPosition, direction, 1);
+	assignWall(fourthLeeMatrix, wallPosition, direction, 1);
 
 	if ((leeOnLine(firstLeeMatrix, firstPlayer, 17)) && (leeOnLine(secondLeeMatrix, secondPlayer, 1)) && (leeOnColumn(thirdLeeMatrix, thirdPlayer, 17)) && (leeOnColumn(fourthLeeMatrix, fourthPlayer, 1)))
 	{
@@ -1220,7 +1220,7 @@ void playVsAI()
 					int maximumLengthFound = 0;
 					matrixPosition wallPosition;
 					char wallOrientation;
-					int l, c;
+					int l = 0, c = 0;
 
 					for (int i = 2; i <= 16; i += 2)
 						for (int j = 1; j <= 15; j += 2) {
@@ -1314,7 +1314,7 @@ void playVsAI()
 								copyTwoMatrices(quoridorMatrix, leeMatrix);
 								copyTwoMatrices(quoridorMatrix, newLeeMatrix);
 								assignWall(leeMatrix, horizontalWallPosition, 'h', 1);
-								assignWall(newLeeMatrix, horizontalWallPosition, 'v', 1);
+								assignWall(newLeeMatrix, horizontalWallPosition, 'h', 1);
 
 								if ((secondPlayer.numberOfWallsLeft > 0) && (leeOnLine(leeMatrix, secondPlayer, 1)) && (leeOnLine(newLeeMatrix, AI, 17)))
 								{
@@ -1372,8 +1372,11 @@ void playVsAI()
 
 			if (AI.position.line == 17)
 				AIWon.setFillColor(purple);
-			if (secondPlayer.position.line == 1)
-				secondPlayerWon.setFillColor(Green);
+			if ( secondPlayer.position.line == 1 )
+			{
+				secondPlayerWon.setFillColor( Green );
+				switchPlayers = false;
+			}
 			if (event.type == sf::Event::Closed)
 				window.close();
 		}

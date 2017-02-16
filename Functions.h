@@ -235,19 +235,23 @@ int findLength(int matrixToCheck[NO_LIN_COL + 1][NO_LIN_COL + 1], player &curren
 					if (nextPosition.line == finishLine)
 						goto finish;
 				}
-				else if (matrixToCheck[nextPosition.line][nextPosition.column] == PAWN) {
+				else if (matrixToCheck[nextPosition.line][nextPosition.column] == PAWN) 
+				{
 					nextPosition.line += 2 * movementArray[i].line;
 					nextPosition.column += 2 * movementArray[i].column;
 
-					if ((matrixToCheck[nextPosition.line][nextPosition.column] == 0) && (matrixToCheck[nextPosition.line - movementArray[i].line][nextPosition.column - movementArray[i].column] == 0)) {
-						++last;
-						leeQueue[last].line = nextPosition.line;
-						leeQueue[last].column = nextPosition.column;
-						matrixToCheck[nextPosition.line][nextPosition.column] = matrixToCheck[currentPosition.line][currentPosition.column] + 1;
 
-						if (nextPosition.line == finishLine)
-							goto finish;
-					}
+					if ( matrixToCheck[ nextPosition.line - movementArray[ i ].line ][ nextPosition.column - movementArray[ i ].column ] == 0 )
+						if ( matrixToCheck[ nextPosition.line ][ nextPosition.column ] == 0 )
+						{
+							++last;
+							leeQueue[last].line = nextPosition.line;
+							leeQueue[last].column = nextPosition.column;
+							matrixToCheck[nextPosition.line][nextPosition.column] = matrixToCheck[currentPosition.line][currentPosition.column] + 1;
+
+							if (nextPosition.line == finishLine)
+								goto finish;
+						}
 				}
 			}
 		}
@@ -260,35 +264,97 @@ finish:
 
 	if ( setWall == false )
 	{
-		while ( matrixToCheck[ nextLine ][ nextColumn ] != 2 ) {
-			for ( int i = 0; i < NO_DIRECTIONS; i++ ) {
-				int newLine = nextLine + 2 * movementArray[ i ].line;
-				int newColumn = nextColumn + 2 * movementArray[ i ].column;
+		int l;
+		int c;
 
-				if ( newLine >= 0 && newColumn >= 0 )
+		int oldLine = currentPlayer.position.line;
+		int oldColumn = currentPlayer.position.column;
+
+		int newLine = oldLine + movementArray[ 0 ].line;
+		int newColumn = oldColumn + movementArray[ 0 ].column;
+
+		currentPlayer.position.line = newLine;
+		currentPlayer.position.column = newColumn;
+
+		int matrix[ NO_LIN_COL + 1 ][ NO_LIN_COL + 1 ];
+		copyTwoMatrices( quoridorMatrix, matrix );
+		matrix[ oldLine ][ oldColumn ] = 0;
+		matrix[ newLine ][ newColumn ] = PAWN;
+
+		int minimumLength = PAWN;
+
+		for ( int i = 0; i < NO_DIRECTIONS; i++ )
+		{
+			newLine = oldLine + movementArray[ i ].line;
+			newColumn = oldColumn + movementArray[ i ].column;
+
+			if ( matrixToCheck[ newLine ][ newColumn ] == 0 )
+			{
+				newLine += movementArray[ i ].line;
+				newColumn += movementArray[ i ].column;
+				if ( matrixToCheck[ newLine ][ newColumn ] == 2 )
 				{
-					if ( matrixToCheck[ newLine ][ newColumn ] == matrixToCheck[ nextLine ][ nextColumn ] - 1 ) {
+					currentPlayer.position.line = newLine;
+					currentPlayer.position.column = newColumn;
+
+					copyTwoMatrices( quoridorMatrix, matrix );
+					matrix[ oldLine ][ oldColumn ] = 0;
+					matrix[ newLine ][ newColumn ] = PAWN;
+
+					int length = findLength( matrix, currentPlayer, finishLine, l, c, true );
+
+					if ( length < minimumLength )
+					{
+						minimumLength = length;
 						nextLine = newLine;
 						nextColumn = newColumn;
-						break;
 					}
-					else
+					else if ( ( length == minimumLength ) && ( newLine == finishLine ) )
 					{
-						newLine += 2 * movementArray[ i ].line;
-						newColumn += 2 * movementArray[ i ].column;
-
-						if ( newLine >= 0 && newColumn >= 0 )
+						minimumLength = length;
+						nextLine = newLine;
+						nextColumn = newColumn;
+					}
+				}
+				else if ( matrixToCheck[ newLine ][ newColumn ] == PAWN ) 
+				{
+					newLine += movementArray[ i ].line;
+					newColumn += movementArray[ i ].column;
+					if ( matrixToCheck[ newLine ][ newColumn ] == 0 )
+					{
+						newLine += movementArray[ i ].line;
+						newColumn += movementArray[ i ].column;
+						if ( matrixToCheck[ newLine ][ newColumn ] == 2 )
 						{
-							if ( matrixToCheck[ newLine ][ newColumn ] == matrixToCheck[ nextLine ][ nextColumn ] - 1 ) {
+							currentPlayer.position.line = newLine;
+							currentPlayer.position.column = newColumn;
+
+							copyTwoMatrices( quoridorMatrix, matrix );
+							matrix[ oldLine ][ oldColumn ] = 0;
+							matrix[ newLine ][ newColumn ] = PAWN;
+
+							int length = findLength( matrix, currentPlayer, finishLine, l, c, true );
+
+							if ( length < minimumLength )
+							{
+								minimumLength = length;
 								nextLine = newLine;
 								nextColumn = newColumn;
-								break;
+							}
+							else if ( ( length == minimumLength ) && ( newLine == finishLine ) )
+							{
+								minimumLength = length;
+								nextLine = newLine;
+								nextColumn = newColumn;
 							}
 						}
 					}
 				}
 			}
 		}
+
+		currentPlayer.position.line = oldLine;
+		currentPlayer.position.column = oldColumn;
 	}
 
 	if (first > last)
